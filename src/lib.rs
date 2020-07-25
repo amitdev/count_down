@@ -1,7 +1,8 @@
 pub mod count_down {
     use itertools::Itertools;
     use std::fmt;
-    use std::rc::Rc;
+    use std::sync::Arc;
+    use rayon::prelude::*;
 
     type Int = i64;
 
@@ -16,7 +17,7 @@ pub mod count_down {
     #[derive(Clone)]
     pub enum Expr {
         Val(Int),
-        App(Op, Rc<Expr>, Rc<Expr>),
+        App(Op, Arc<Expr>, Arc<Expr>),
     }
 
     use Expr::*;
@@ -58,7 +59,7 @@ pub mod count_down {
         [Add, Sub, Mul, Div].iter()
             .filter(|op| valid(op, *x, *y))
             .map(|op|
-                (App(*op, Rc::new(l.clone()), Rc::new(r.clone())),
+                (App(*op, Arc::new(l.clone()), Arc::new(r.clone())),
                  apply(op, *x, *y)))
             .collect()
     }
@@ -80,7 +81,7 @@ pub mod count_down {
     }
 
     pub fn solutions(ns: Vec<Int>, n: Int) -> Vec<Expr> {
-        sub_bags(ns).iter()
+        sub_bags(ns).par_iter()
             .flat_map(|bag|
                 results(&bag).into_iter()
                     .filter(|(_, m)| *m == n)
