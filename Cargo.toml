@@ -1,0 +1,19 @@
+[package]
+name = "count_down"
+version = "0.1.0"
+authors = ["Amit Dev"]
+edition = "2018"
+
+[lib]
+name = "count_down"
+path = "src/lib.rs"
+
+[dependencies]
+itertools="0.8.2"
+
+[dev-dependencies]
+criterion = "0.3"
+
+[[bench]]
+name = "count_down_bench"
+harness = false
